@@ -62,7 +62,7 @@ jobs:
           mkdir build
           cd build
           ../configure --target-list=arm-softmmu --extra-cflags=-I/usr/local/opt/openssl@3/include --extra-ldflags='-L/usr/local/opt/openssl@3/lib -lcrypto'
-          build
+          make
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
