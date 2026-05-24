@@ -17,7 +17,6 @@ jobs:
           sudo apt install make ninja-build pkg-config libssl-dev libsdl2-dev libpixman-1-dev libpixman-1-0 libglib2.0-dev
       - name: Configure & build
         run: |
-          cd ipod_touch_2g
           mkdir build
           cd build
           ../configure --enable-sdl --disable-cocoa --target-list=arm-softmmu --disable-capstone --disable-slirp --extra-cflags=-I/usr/include/openssl --extra-ldflags='-lcrypto' --disable-werror --enable-pie
@@ -38,7 +37,6 @@ jobs:
           brew install glib ninja pixman pkg-config sdl2 openssl
       - name: Configure & build
         run: |
-          cd ipod_touch_2g
           mkdir build
           cd build
           ../configure --enable-sdl --target-list=arm-softmmu --disable-capstone --disable-pie --disable-slirp --extra-cflags=-I/opt/homebrew/opt/openssl@3/include --extra-ldflags='-L/opt/homebrew/opt/openssl@3/lib -lcrypto'
@@ -59,7 +57,6 @@ jobs:
           brew install glib ninja pixman pkg-config sdl2 openssl
       - name: Configure & build
         run: |
-          cd ipod_touch_2g
           mkdir build
           cd build
           ../configure --target-list=arm-softmmu --extra-cflags=-I/usr/local/opt/openssl@3/include --extra-ldflags='-L/usr/local/opt/openssl@3/lib -lcrypto'
@@ -73,10 +70,8 @@ jobs:
 
   windows:
     runs-on: windows-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Install MSYS2
         uses: msys2/setup-msys2@v2
       - name: Install dependencies
@@ -85,12 +80,10 @@ jobs:
       - name: Build
         shell: msys2 {0}
         run: |
-          cd ipod_touch_2g
           mkdir build
           cd build
           ../configure --enable-sdl --disable-cocoa --target-list=arm-softmmu --disable-capstone --disable-slirp --disable-pie --extra-cflags=-I/mingw64/include/openssl --extra-ldflags='-L/mingw64/lib -lcrypto' --disable-stack-protector --disable-werror
           make
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -100,31 +93,18 @@ jobs:
 
   linux-arm64:
     runs-on: ubuntu-24.04-arm
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y \
-            ninja-build pkg-config \
-            libglib2.0-dev libpixman-1-dev \
-            libsdl2-dev libssl-dev
-
+          sudo pacman -S --needed make ninja pkgconf openssl sdl2 pixman glib2
       - name: Configure & build
         run: |
           cd ipod_touch_2g
           mkdir build
           cd build
-          ../configure \
-            --enable-sdl \
-            --target-list=arm-softmmu \
-            --disable-capstone \
-            --disable-slirp \
-            --disable-werror
-          ninja
-
+          ../configure --enable-sdl --disable-cocoa --target-list=arm-softmmu --disable-capstone --disable-slirp --extra-cflags=-I/usr/include/openssl --extra-ldflags='-lcrypto' --disable-werror --enable-pie
+          make
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
