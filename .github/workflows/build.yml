@@ -25,7 +25,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: qemu-linux-x86_64
-          path: ipod_touch_2g/build/qemu-system-arm
+          path: build/arm-softmmu/qemu-system-arm
 
 
   macos-arm64:
@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: qemu-macos-arm64
-          path: ipod_touch_2g/build/qemu-system-arm
+          path: build/arm-softmmu/qemu-system-arm
 
 
   macos-x86_64:
@@ -67,7 +67,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: qemu-macos-x86_64
-          path: ipod_touch_2g/build/qemu-system-arm
+          path: build/arm-softmmu/qemu-system-arm
 
 
   windows:
@@ -79,16 +79,19 @@ jobs:
         with:
           msystem: MINGW64
           update: true
-          install: git
-      - name: Install dependencies
-        shell: msys2 {0}
-        run: |
-          pacman -Syu --noconfirm
-          pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git python ninja mingw-w64-x86_64-glib2 mingw-w64-x86_64-pixman python-setuptools mingw-w64-x86_64-SDL2 python-pip
-          python3 -m pip install --break-system-packages distlib setuptools wheel
+          install: >-
+            git
+            base-devel
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-glib2
+            mingw-w64-x86_64-pixman
+            mingw-w64-x86_64-SDL2
+            mingw-w64-x86_64-openssl
+            mingw-w64-x86_64-ninja
       - name: Build
         shell: msys2 {0}
         run: |
+          git submodule update --init --recursive || true
           mkdir build
           cd build
           ../configure --enable-sdl --disable-cocoa --target-list=arm-softmmu --disable-capstone --disable-slirp --disable-pie --extra-cflags=-I/mingw64/include/openssl --extra-ldflags='-L/mingw64/lib -lcrypto' --disable-stack-protector --disable-werror
@@ -97,8 +100,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: qemu-windows-x86_64
-          path: ipod_touch_2g/build/qemu-system-arm.exe
-
+          path: build/qemu-system-arm.exe
 
   linux-arm64:
     runs-on: ubuntu-latest
@@ -131,4 +133,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: qemu-linux-arm64
-          path: ipod_touch_2g/build/qemu-system-arm
+          path: build/arm-softmmu/qemu-system-arm
