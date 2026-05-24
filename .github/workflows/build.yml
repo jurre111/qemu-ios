@@ -119,7 +119,8 @@ jobs:
       - name: Install dependencies
         run: |
           pacman -Syu --noconfirm
-          sudo pacman -S --noconfirm  --needed make ninja pkgconf openssl sdl2 pixman glib2
+          sudo pacman -S --noconfirm  --needed make ninja pkgconf openssl sdl2 pixman glib2 python-pip
+          python3 -m pip install --break-system-packages distlib setuptools wheel
       - name: Configure & build
         run: |
           mkdir build
