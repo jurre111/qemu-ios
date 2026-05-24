@@ -84,7 +84,7 @@ jobs:
         shell: msys2 {0}
         run: |
           pacman -Syu --noconfirm
-          pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git python ninja mingw-w64-x86_64-glib2 mingw-w64-x86_64-pixman python-setuptools mingw-w64-x86_64-SDL2
+          pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git python ninja mingw-w64-x86_64-glib2 mingw-w64-x86_64-pixman python-setuptools mingw-w64-x86_64-SDL2 python-pip
           python3 -m pip install --break-system-packages distlib setuptools wheel
       - name: Build
         shell: msys2 {0}
@@ -118,7 +118,8 @@ jobs:
           chown -R builder:builder ./
       - name: Install dependencies
         run: |
-          sudo pacman -S --needed make ninja pkgconf openssl sdl2 pixman glib2
+          pacman -Syu --noconfirm
+          sudo pacman -S --noconfirm  --needed make ninja pkgconf openssl sdl2 pixman glib2
       - name: Configure & build
         run: |
           mkdir build
