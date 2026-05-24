@@ -1,0 +1,132 @@
+name: build
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  linux-x86_64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt install make ninja-build pkg-config libssl-dev libsdl2-dev libpixman-1-dev libpixman-1-0 libglib2.0-dev
+      - name: Configure & build
+        run: |
+          cd ipod_touch_2g
+          mkdir build
+          cd build
+          ../configure --enable-sdl --disable-cocoa --target-list=arm-softmmu --disable-capstone --disable-slirp --extra-cflags=-I/usr/include/openssl --extra-ldflags='-lcrypto' --disable-werror --enable-pie
+          make
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qemu-linux-x86_64
+          path: ipod_touch_2g/build/qemu-system-arm
+
+
+  macos-arm64:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          brew install glib ninja pixman pkg-config sdl2 openssl
+      - name: Configure & build
+        run: |
+          cd ipod_touch_2g
+          mkdir build
+          cd build
+          ../configure --enable-sdl --target-list=arm-softmmu --disable-capstone --disable-pie --disable-slirp --extra-cflags=-I/opt/homebrew/opt/openssl@3/include --extra-ldflags='-L/opt/homebrew/opt/openssl@3/lib -lcrypto'
+          make
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qemu-macos-arm64
+          path: ipod_touch_2g/build/qemu-system-arm
+
+
+  macos-x86_64:
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          brew install glib ninja pixman pkg-config sdl2 openssl
+      - name: Configure & build
+        run: |
+          cd ipod_touch_2g
+          mkdir build
+          cd build
+          ../configure --target-list=arm-softmmu --extra-cflags=-I/usr/local/opt/openssl@3/include --extra-ldflags='-L/usr/local/opt/openssl@3/lib -lcrypto'
+          build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qemu-macos-x86_64
+          path: ipod_touch_2g/build/qemu-system-arm
+
+
+  windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+      - name: Install dependencies
+        run: |
+          pacman -S base-devel mingw-w64-x86_64-toolchain git python ninja mingw-w64-x86_64-glib2 mingw-w64-x86_64-pixman python-setuptools mingw-w64-x86_64-SDL2
+      - name: Build
+        shell: msys2 {0}
+        run: |
+          cd ipod_touch_2g
+          mkdir build
+          cd build
+          ../configure --enable-sdl --disable-cocoa --target-list=arm-softmmu --disable-capstone --disable-slirp --disable-pie --extra-cflags=-I/mingw64/include/openssl --extra-ldflags='-L/mingw64/lib -lcrypto' --disable-stack-protector --disable-werror
+          make
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qemu-windows-x86_64
+          path: ipod_touch_2g/build/qemu-system-arm.exe
+
+
+  linux-arm64:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            ninja-build pkg-config \
+            libglib2.0-dev libpixman-1-dev \
+            libsdl2-dev libssl-dev
+
+      - name: Configure & build
+        run: |
+          cd ipod_touch_2g
+          mkdir build
+          cd build
+          ../configure \
+            --enable-sdl \
+            --target-list=arm-softmmu \
+            --disable-capstone \
+            --disable-slirp \
+            --disable-werror
+          ninja
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qemu-linux-arm64
+          path: ipod_touch_2g/build/qemu-system-arm
