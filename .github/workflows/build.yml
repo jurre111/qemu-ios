@@ -34,8 +34,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade distlib
           brew install glib ninja pixman pkg-config sdl2 openssl
+          python3 -m pip install --break-system-packages distlib setuptools wheel
       - name: Configure & build
         run: |
           mkdir build
