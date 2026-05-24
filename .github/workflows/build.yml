@@ -85,6 +85,7 @@ jobs:
         run: |
           pacman -Syu --noconfirm
           pacman -S --noconfirm base-devel mingw-w64-x86_64-toolchain git python ninja mingw-w64-x86_64-glib2 mingw-w64-x86_64-pixman python-setuptools mingw-w64-x86_64-SDL2
+          python3 -m pip install --break-system-packages distlib setuptools wheel
       - name: Build
         shell: msys2 {0}
         run: |
