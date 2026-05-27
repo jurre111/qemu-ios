@@ -41,7 +41,7 @@ jobs:
         run: |
           mkdir linux-x86_64
           cd linux-x86_64
-          cp build/arm-softmmu/qemu-system-arm qemu-ios
+          cp ../build/arm-softmmu/qemu-system-arm qemu-ios
           wget https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nor_n72ap.bin
           wget https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4
           wget https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip
@@ -72,11 +72,25 @@ jobs:
           cd build
           ../configure --enable-sdl --target-list=arm-softmmu --disable-capstone --disable-pie --disable-slirp --extra-cflags=-I/opt/homebrew/opt/openssl@3/include --extra-ldflags='-L/opt/homebrew/opt/openssl@3/lib -lcrypto'
           make
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Package
+        run: |
+          mkdir macos-arm64
+          cd macos-arm64
+          cp ../build/arm-softmmu/qemu-system-arm qemu-ios
+          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nor_n72ap.bin
+          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4
+          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip
+          unzip nand_n72ap.zip
+          cp -r nand_n72ap/nand .
+          rm -rvf nand_n72ap
+          cd ..
+          zip -r macos-arm64.zip macos-arm64
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: qemu-macos-arm64
-          path: build/arm-softmmu/qemu-system-arm
+          tag_name: latest
+          files: |
+            macos-arm64.zip
 
 
   macos-x86_64:
@@ -94,11 +108,25 @@ jobs:
           cd build
           ../configure --target-list=arm-softmmu --extra-cflags=-I/usr/local/opt/openssl@3/include --extra-ldflags='-L/usr/local/opt/openssl@3/lib -lcrypto'
           make
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Package
+        run: |
+          mkdir macos-x86_64
+          cd macos-x86_64
+          cp ../build/arm-softmmu/qemu-system-arm qemu-ios
+          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nor_n72ap.bin
+          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4
+          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip
+          unzip nand_n72ap.zip
+          cp -r nand_n72ap/nand .
+          rm -rvf nand_n72ap
+          cd ..
+          zip -r macos-x86_64.zip macos-x86_64
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: qemu-macos-x86_64
-          path: build/arm-softmmu/qemu-system-arm
+          tag_name: latest
+          files: |
+            macos-x86_64.zip
 
 
   windows:
