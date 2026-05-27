@@ -46,8 +46,7 @@ jobs:
           wget https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4
           wget https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip
           unzip nand_n72ap.zip
-          cp -r nand_n72ap/nand .
-          rm -rvf nand_n72ap
+          rm nand_n72ap.zip
           cd ..
           zip -r linux-x86_64.zip linux-x86_64
       - name: Release
@@ -81,8 +80,7 @@ jobs:
           curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4
           curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip
           unzip nand_n72ap.zip
-          cp -r nand_n72ap/nand .
-          rm -rvf nand_n72ap
+          rm nand_n72ap.zip
           cd ..
           zip -r macos-arm64.zip macos-arm64
       - name: Release
@@ -117,8 +115,7 @@ jobs:
           curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4
           curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip
           unzip nand_n72ap.zip
-          cp -r nand_n72ap/nand .
-          rm -rvf nand_n72ap
+          rm nand_n72ap.zip
           cd ..
           zip -r macos-x86_64.zip macos-x86_64
       - name: Release
