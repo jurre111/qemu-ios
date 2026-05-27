@@ -76,9 +76,9 @@ jobs:
           mkdir macos-arm64
           cd macos-arm64
           cp ../build/arm-softmmu/qemu-system-arm qemu-ios
-          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nor_n72ap.bin
-          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4
-          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip
+          curl -LO https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nor_n72ap.bin
+          curl -LO https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4
+          curl -LO https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip
           unzip nand_n72ap.zip
           rm nand_n72ap.zip
           cd ..
@@ -111,9 +111,9 @@ jobs:
           mkdir macos-x86_64
           cd macos-x86_64
           cp ../build/arm-softmmu/qemu-system-arm qemu-ios
-          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nor_n72ap.bin
-          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4
-          curl -O https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip
+          curl -LO https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nor_n72ap.bin
+          curl -LO https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4
+          curl -LO https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip
           unzip nand_n72ap.zip
           rm nand_n72ap.zip
           cd ..
@@ -148,7 +148,6 @@ jobs:
       - name: Build
         shell: msys2 {0}
         run: |
-          git submodule update --init --recursive || true
           mkdir build
           cd build
           ../configure --enable-sdl --disable-cocoa --target-list=arm-softmmu --disable-capstone --disable-slirp --disable-pie --extra-cflags=-I/mingw64/include/openssl --extra-ldflags='-L/mingw64/lib -lcrypto' --disable-stack-protector --disable-werror
