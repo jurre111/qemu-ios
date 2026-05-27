@@ -152,13 +152,27 @@ jobs:
         run: |
           mkdir build
           cd build
-          ../configure --enable-sdl --disable-cocoa --target-list=arm-softmmu --disable-capstone --disable-slirp --disable-pie --extra-cflags=-I/mingw64/include/openssl --extra-ldflags='-L/mingw64/lib -lcrypto' --disable-stack-protector --disable-werror
+          ../configure --enable-sdl --disable-cocoa --target-list=arm-softmmu --disable-capstone --disable-slirp --disable-pie --extra-cflags=-I/mingw64/include/openssl --extra-ldflags='-L/mingw64/lib -lcrypto' --disable-stack-protector --disable-werror --disable-guest-agent
           make
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Package
+        shell: pwsh
+        run: |
+          mkdir windows
+          cd windows
+          cp ../build/arm-softmmu/qemu-system-arm.exe qemu-ios
+          iwr https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nor_n72ap.bin -OutFile "nor_n72ap.bin"
+          iwr https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/bootrom_240_4 -OutFile "bootrom_240_4"
+          iwr https://github.com/devos50/qemu-ios/releases/download/n72ap_v1/nand_n72ap.zip -OutFile "nand_n72ap.zip"
+          Expand-Archive nand_n72ap.zip -DestinationPath .
+          rm nand_n72ap.zip
+          cd ..
+          Compress-Archive -Path windows\* -DestinationPath windows.zip
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: qemu-windows-x86_64
-          path: build/qemu-system-arm.exe
+          tag_name: latest
+          files: |
+            windows.zip
 
   linux-arm64:
     runs-on: ubuntu-22.04-arm
